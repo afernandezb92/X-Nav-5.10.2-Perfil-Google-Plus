@@ -43,7 +43,7 @@
       function makeApiCall() {
         gapi.client.load('plus', 'v1', function() {
           var request = gapi.client.plus.people.get({
-            'userId': '110369286404149674170'
+            'userId': '108086881826934773478'
             // For instance: 
             // 'userId': '+GregorioRobles'
           });
@@ -53,14 +53,38 @@
             image.src = resp.image.url;
             heading.appendChild(image);
             heading.appendChild(document.createTextNode(resp.displayName));
-
             document.getElementById('content').appendChild(heading);
           });
+          var request2 = gapi.client.plus.activities.list({
+			  'userId' : '108086881826934773478',
+			  'collection' : 'public'
+			});
+			
+			request2.execute(function(resp) {
+			  var numItems = resp.items.length;
+			  var title;
+			  var location;
+			  for (var i = 0; i < numItems; i++) {
+				  var activity  = document.createElement('h5');
+				  title = resp.items[i].title;
+				  activity.appendChild(document.createTextNode("Title: " + title));
+				  if(resp.items[i].location){
+					location = resp.items[i].location.address.formatted;
+					activity.appendChild(document.createTextNode(", location: " + location));
+				  }	
+				  if(title != ""){
+					document.getElementById('activities').appendChild(activity);
+				}
+			  }
+			  
+			});
         });
       }
     </script>
     <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
     <div id="content"></div>
+    <h2>Activities:</h2>
+    <div id="activities"></div>
     <p>Retrieves your profile name (and picture) using the Google Plus API.</p>
   </body>
 </html>
